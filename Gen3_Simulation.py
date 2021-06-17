@@ -109,10 +109,13 @@ projectionMatrix = pybullet.computeProjectionMatrixFOV(
 # Spawn objects
 numObjects = 15
 
+'''
 objId = spawn_random_objects(
     numObjects,
     objSpawnLocation=[1, 1, 1],
     objPath="./objects/random_urdfs")
+'''
+
 
 
 ''' Run the Simulation '''
