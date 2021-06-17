@@ -1,33 +1,58 @@
-import pybullet
-import time
-import pybullet_data
+#!/usr/bin/python3
+
+'''!
+asdfghjk
+'''
+
+''' Standard Libraries '''
 import math
 import numpy as np
+import time
 
-def spawnObj():
-    """
+''' PyBullet Libraries'''
+import pybullet
+import pybullet_data
+
+
+
+def spawnRandomObjects(numObjects, objSpawnLocation, objPath, objScale = 0.15):
+    '''!
     Spawns a random object from a .URDF file.
-    Returns ID of spawned object.
-    """
+    @name spawnRandomObjects()
+    
+    @brief Spawns a specified dnumber of random objects at a specified 
+           location with added Gaussian Noise to prevent object spawn collisions.
+    
+    @param numObjects The number of objects to be spawned.
+    @param objSpawnLocation A 3-Vector (list type) specifying the spawn location.
+    @param objPath The path string to the object files.
+    @param objScale The value by which to scale the objects volumetrically. 
+    
+    @return objIds Integer IDs of Spawned Objects.
+    '''
+    
+    # Add Gaussian Noise to Spawn Location to Avoid Object Collisions
+    objStartPos = np.random.normal(
+        loc = objSpawnLocation, 
+        scale = [objScale, objScale, 0.0], 
+        size = (numObjects, 3)
+    )
+    
+    objIds = []
+    for objIndex in range(numObjects):
 
-    # general parameters
-    scale = 0.15 # max magnitude of position randomness
-    height = 0.3
+        # get random object from repository
+        objFileNum = str("%03d" % np.random.randint(0, 1000))
+        
+        # Select an Object File at Random
+        objIds.append(pybullet.loadURDF(
+            fileName = objPath + "/" + objFileNum + "/" + objFileNum + ".urdf",
+            basePosition = objStartPos[objIndex]
+        ))
 
-    # randomize position
-    objStartPos = [tray_position[0] + scale*2*(np.random.rand()-0.5),
-                   tray_position[1] + scale*2*(np.random.rand()-0.5),
-                   tray_position[2] + height]
-    objStartOrientation = pybullet.getQuaternionFromEuler([0,0,0])
+        #print("Spawned object: " + str("%03d" % objFileNum))
 
-    # get random object from repository
-    path = "./objects/random_urdfs/"
-    objNum = np.random.randint(0, 1000)
-    objIndex = str("%03d" % objNum)
-    objId = pybullet.loadURDF(path + objIndex + "/" + objIndex + ".urdf", objStartPos, objStartOrientation)
-
-    print("Spawned object: " + objIndex)
-    return objId
+    return objIds
 
 ROBOT_URDF_PATH = "./voaige_description/robots/gen3_robotiq_2f_140.urdf"
 
@@ -76,15 +101,19 @@ viewMatrix = pybullet.computeViewMatrix(
     cameraUpVector = [0, 1, 0])
     
 projectionMatrix = pybullet.computeProjectionMatrixFOV(
-    fov=45.0,
-    aspect=1.0,
-    nearVal=0.01,
-    farVal=2.0)
+    fov = 45.0,
+    aspect = 1.0,
+    nearVal = 0.01,
+    farVal = 2.0)
 
 # Spawn objects
-numObjects = 5
-for _ in range(numObjects):
-    objId = spawnObj()
+numObjects = 15
+
+objId = spawnRandomObjects(
+    numObjects, 
+    objSpawnLocation = [1, 1, 1],
+    objPath = "./objects/random_urdfs")
+    
 
 ''' Run the Simulation '''      
 while True:
