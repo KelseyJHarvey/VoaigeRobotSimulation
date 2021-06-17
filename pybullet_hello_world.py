@@ -98,7 +98,5 @@ while True:
     pybullet.stepSimulation()
     time.sleep(timeStep)
 
-    
-
-
+pybullet.disconnect()
 
