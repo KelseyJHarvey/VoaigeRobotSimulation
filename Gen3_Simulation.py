@@ -102,9 +102,9 @@ numDofs = 6
 robotStartPos = [0, 0, 0]
 robotStartOrn = pybullet.getQuaternionFromEuler(np.deg2rad([0, 0, 0]))
 robotId = pybullet.loadURDF(
-    ROBOT_URDF_PATH, 
-    basePosition = robotStartPos,
-    baseOrientation = robotStartOrn, 
+    ROBOT_URDF_PATH,
+    basePosition=robotStartPos,
+    baseOrientation=robotStartOrn,
     useFixedBase=True)
 
 numJoints = pybullet.getNumJoints(robotId)
@@ -159,8 +159,8 @@ pybullet.setJointMotorControlArray(
     controlMode=pybullet.POSITION_CONTROL,
     targetPositions=np.deg2rad([30.0, 45.0, 15.0, 20.0, 10.0, 5.0]),
     forces=maxForce)
-    
-    
+
+
 ''' Run the Simulation '''
 while True:
 
@@ -169,11 +169,11 @@ while True:
         height=camHeight,
         viewMatrix=viewMatrix,
         projectionMatrix=projectionMatrix)
-    
+
     linkWorldPosition = pybullet.getLinkState(
-    bodyUniqueId=robotId,
-    linkIndex=7,
-    computeForwardKinematics = 1)
+        bodyUniqueId=robotId,
+        linkIndex=7,
+        computeForwardKinematics=1)
 
     targetEndEffectorLocation = linkWorldPosition[0]
 
@@ -188,7 +188,7 @@ while True:
         targetPosition=targetEndEffectorLocation)
 
     print(np.rad2deg(thetaInvKin))
-    print("\n\n\n")    
+    print("\n\n\n")
 
     pybullet.stepSimulation()
 
