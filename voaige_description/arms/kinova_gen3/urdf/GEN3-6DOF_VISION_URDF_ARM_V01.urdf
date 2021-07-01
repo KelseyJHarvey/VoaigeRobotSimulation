@@ -1,0 +1,300 @@
+<?xml version="1.0" ?>
+
+<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+<!-- File:        voaige_mk1.urdf                                               -->
+<!-- Description: This is the URDF File for the VoAIge Mark 1 Articulated Robot -->
+<!--              Serial Gripper.                                               -->
+<!-- Version:     1.0                                                           -->
+<!-- Author:      Kelsey J. Harvey, kelseyjh@andrew.cmu.edu                     -->
+<!-- Write Date:  June 22, 2021                                                 -->
+<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+
+<!-- MK1 Robot Definition -->
+<robot name = "mk1"
+       version = "1.0">
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- The Portion of the File Details the MK1 Arm Definition Information -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <!-- MK1 Arm Base Link -->
+    <link name = "base_link">
+        <visual>
+            <origin xyz = "0 0 0" 
+                    rpy = "0 0 0" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/gen3/6dof/meshes/base_link.STL" />
+            </geometry>
+            <material name = "">
+                <color rgba = "0.75294 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz = "0 0 0"
+                    rpy = "0 0 0" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/gen3/6dof/meshes/base_link.STL" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz = "-0.000648 -0.000166 0.084487" 
+                    rpy = "0 0 0" />
+            <mass value = "1.697" />
+            <inertia ixx = "0.004622" ixy = "9E-06" ixz = "6E-05"
+                     iyy = "0.004495" iyz = "9E-06" izz = "0.002079" />
+        </inertial>
+    </link>
+
+    <!-- MK1 Arm First Actuator -->
+    <joint name = "actuator_1"
+           type = "continuous">
+        <origin xyz = "0 0 0.15643" 
+                rpy = "-3.1416 0.0 0.0" />
+        <parent link = "base_link" />
+        <child link = "shoulder_link" />
+        <axis xyz = "0 0 1" />
+        <limit effort = "39" 
+               velocity = "0.8727" />
+    </joint>
+
+    <!-- MK1 Arm Shoulder Link -->
+    <link name = "shoulder_link">
+        <visual>
+            <origin xyz = "0 0 0" 
+                    rpy = "0 0 0" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/gen3/6dof/meshes/shoulder_link.STL" />
+            </geometry>
+          <material name = "">
+            <color rgba = "0.75294 0.75294 0.75294 1" />
+          </material>
+        </visual>
+        <collision>
+            <origin xyz = "0 0 0"
+                    rpy = "0 0 0" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/gen3/6dof/meshes/shoulder_link.STL" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz = "-2.3E-05 -0.010364 -0.07336"
+                    rpy = "0 0 0" />
+            <mass value = "1.377" />
+            <inertia ixx = "0.00457" ixy = "1E-06" ixz = "2E-06"
+                     iyy = "0.004831" iyz = "0.000448" izz = "0.001409" />
+        </inertial>
+    </link>
+
+    <!-- MK1 Arm Second Actuator -->
+    <joint name = "actuator_2"
+           type = "revolute">
+        <origin xyz = "0 0.005375 -0.12838" 
+                rpy = "1.5708 0.0 0.0" />
+        <parent link = "shoulder_link" />
+        <child link = "bicep_link" />
+        <axis xyz = "0 0 1" />
+        <limit lower = "-2.41" 
+               upper = "2.41"
+               effort = "39"
+               velocity = "0.8727" />
+    </joint>
+
+    <!-- MK1 Arm Bicep Link -->
+    <link name = "bicep_link">
+        <visual>
+            <origin xyz = "0 0 0"
+                    rpy = "0 0 0" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/gen3/6dof/meshes/bicep_link.STL" />
+            </geometry>
+            <material name = "">
+                <color rgba = "0.75294 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz = "0 0 0"
+                    rpy = "0 0 0" />
+            <geometry>
+                <mesh filename="package://voaige_description/arms/gen3/6dof/meshes/bicep_link.STL" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz = "3.5E-05 -0.208207 -0.01889"
+                    rpy = "0 0 0" />
+                <mass value = "1.262" />
+                <inertia ixx = "0.046752" ixy = "-9E-06" ixz = "0"
+                         iyy = "0.00085" iyz = "-9.8E-05" izz = "0.047188" />
+        </inertial>
+    </link>
+
+    <!-- MK1 Arm Third Actuator -->
+    <joint name = "actuator_3" 
+           type = "revolute">
+        <origin xyz = "0 -0.41 0"
+                rpy = "3.1416 0 0" />
+        <parent link = "bicep_link" />
+        <child link = "forearm_link" />
+        <axis xyz = "0 0 1" />
+        <limit lower = "-2.66"
+               upper = "2.66"
+               effort = "39"
+               velocity = "0.8727" />
+    </joint>
+
+    <!-- MK1 Arm Bicep Link -->
+    <link name = "forearm_link">
+        <visual>
+            <origin xyz = "0 0 0"
+                    rpy = "0 0 0" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/gen3/6dof/meshes/forearm_link.STL" />
+            </geometry>
+            <material name = "">
+                <color rgba = "0.75294 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz = "0 0 0"
+                    rpy = "0 0 0" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/gen3/6dof/meshes/forearm_link.STL" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz = "1.8E-05 0.076168 -0.01397"
+                    rpy = "0 0 0" />
+            <mass value = "0.93" />
+            <inertia ixx = "0.008292" ixy = "-1E-06" ixz = "0"
+                     iyy = "0.000628" iyz = "0.000432" izz = "0.008464" />
+        </inertial>
+    </link>
+
+    <!-- MK1 Arm Fourth Actuator -->
+    <joint name = "actuator_4"
+           type = "continuous">
+        <origin xyz = "0 0.20843 -0.006375"
+                rpy = "1.5708 0.0 0.0" />
+        <parent link = "forearm_link" />
+        <child link = "sphericalwrist1_link" />
+        <axis xyz = "0 0 1" />
+        <limit effort = "9"
+               velocity = "0.8727" />
+    </joint>
+
+    <!-- MK1 Arm First Spherical Wrist Link -->
+    <link name = "sphericalwrist1_link">
+        <visual>
+          <origin xyz = "0 0 0"
+                  rpy = "0 0 0" />
+          <geometry>
+            <mesh filename = "package://voaige_description/arms/gen3/6dof/meshes/spherical_wrist_1_link.STL" />
+          </geometry>
+          <material name = "">
+            <color rgba = "0.75294 0.75294 0.75294 1" />
+          </material>
+        </visual>
+        <collision>
+            <origin xyz = "0 0 0"
+                    rpy = "0 0 0" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/gen3/6dof/meshes/spherical_wrist_1_link.STL" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz = "-1E-06 0.008486 -0.062937"
+                    rpy = "0 0 0" />
+            <mass value = "0.6781" />
+            <inertia ixx = "0.001645" ixy = " 0.000000" ixz = "0.000000"
+                     iyy = "0.001666" iyz = "-0.000234" izz = "0.000389" />
+        </inertial>
+    </link>
+
+    <!-- MK1 Arm Fifth Actuator -->
+    <joint name = "actuator_5"
+           type = "revolute">
+        <origin xyz = " 0.000000 -0.00017505 -0.105930"
+                rpy = "-1.570800  0.00000000  0.000000" />
+        <parent link = "sphericalwrist1_link" />
+        <child link = "sphericalwrist2_link" />
+        <axis xyz = "0 0 1" />
+        <limit lower = "-2.23"
+               upper = "2.23"
+               effort = "9"
+               velocity = "0.8727" />
+    </joint>
+
+    <!-- MK1 Arm Second Spherical Wrist Link -->
+    <link name = "sphericalwrist2_link">
+        <inertial>
+            <origin xyz = "-1E-06 0.046429 -0.008704"
+                    rpy = " 0.000 0.000000  0.000000" />
+            <mass value = "0.678" />
+            <inertia ixx = "0.001685" ixy = "0.000000" ixz = "0.000000"
+                     iyy = "0.000400" iyz = "0.000255" izz = "0.001696" />
+        </inertial>
+        <visual>
+            <origin xyz = "0 0 0"
+                    rpy = "0 0 0" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/gen3/6dof/meshes/spherical_wrist_2_link.STL" />
+            </geometry>
+            <material name = "">
+                <color rgba = "0.75294 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz = "0 0 0"
+                    rpy = "0 0 0" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/gen3/6dof/meshes/spherical_wrist_2_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- MK1 Arm Sixth Actuator -->
+    <joint name = "actuator_6"
+           type = "continuous">
+        <origin xyz = "0.000000 0.105930 -0.00017505"
+                rpy = "1.570800 0.000000  0.00000000" />
+        <parent link = "sphericalwrist2_link" />
+        <child link = "bracelet_link" />
+        <axis xyz = "0 0 1" />
+        <limit effort = "9"
+               velocity = "0.8727" />
+    </joint>
+
+    <!-- MK1 Arm Bracelet Link -->
+    <link name="bracelet_link">
+        <inertial>
+            <origin xyz = "0.000281 0.011402 -0.029798"
+                    rpy = "0.000000 0.000000  0.000000" />
+            <mass value = "0.5" />
+            <inertia ixx = "0.000587" ixy = "3E-06" ixz = "3E-06"
+                     iyy = "0.000369" iyz = "-0.000118" izz = "0.000609" />
+        </inertial>
+        <visual>
+            <origin xyz = "0 0 0"
+                    rpy = "0 0 0" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/gen3/6dof/meshes/bracelet_with_vision_link.STL" />
+            </geometry>
+            <material name = "">
+                <color rgba = "0.75294 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz = "0 0 0"
+                    rpy = "0 0 0" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/gen3/6dof/meshes/bracelet_with_vision_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+    
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- The Portion of the File Details the MK1 Gripper Definition Information -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    
+</robot>
+

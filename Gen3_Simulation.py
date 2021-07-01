@@ -34,7 +34,7 @@ def spawn_random_objects(numObjects, objSpawnLocation, objPath, objScale=0.1):
     # Add Gaussian Noise to Spawn Location to Avoid Object Collisions
     objStartPos = npybullet.random.normal(
         loc=objSpawnLocation,
-        scale=[objScale, objScale, 0.0],
+        scale=[objScale]*2 + [0.0],
         size=(numObjects, 3)
     )
 
@@ -54,36 +54,9 @@ def spawn_random_objects(numObjects, objSpawnLocation, objPath, objScale=0.1):
 
     return objIds
 
+ROBOT_URDF_PATH = "./voaige_description/robots/voaige_mk1/urdf/mk1.urdf"
 
-def accurateCalculateInverseKinematics(robotId, targetPos, threshold, maxIter):
-    closeEnough = False
-    iter = 0
-    dist2 = 1e30
-    while (not closeEnough and iter < maxIter):
-
-        jointPoses = pybullet.calculateInverseKinematics(
-            robotId,
-            7,
-            targetPosition=targetPos)
-
-        for i in range(6):
-            pybullet.resetJointState(robotId, i, jointPoses[i])
-
-        ls = pybullet.getLinkState(robotId, 7)
-        newPos = ls[4]
-        diff = [targetPos[0] - newPos[0], targetPos[1] -
-                newPos[1], targetPos[2] - newPos[2]]
-        dist2 = (diff[0] * diff[0] + diff[1] * diff[1] + diff[2] * diff[2])
-        closeEnough = (dist2 < threshold)
-        iter += 1
-
-    # print ("Num iter: "+str(iter) + "threshold: "+str(dist2))
-    return jointPoses
-
-
-ROBOT_URDF_PATH = "./voaige_description/robots/gen3_robotiq_2f_140.urdf"
-
-''' Configure the Simulation '''
+''' Simulation Configuration '''
 
 fps = 240.0
 timeStep = 1.0/fps
@@ -91,18 +64,27 @@ timeStep = 1.0/fps
 physicsClient = pybullet.connect(pybullet.GUI)
 pybullet.setAdditionalSearchPath(pybullet_data.getDataPath())
 pybullet.setRealTimeSimulation(
-    enableRealTimeSimulation=1, physicsClientId=physicsClient)
+    enableRealTimeSimulation = 1,
+    physicsClientId = physicsClient
+    )
 pybullet.setGravity(0, 0, -9.81)
-pybullet.setTimeStep(timeStep=timeStep, physicsClientId=physicsClient)
 
-''' Robot Arm Configuration '''
+# pybullet.setTimeStep(
+#     timeStep = timeStep,
+#     physicsClientId = physicsClient
+#     )
+
+''' Robot Arm Confi# pybullet.setTimeStep(
+#     timeStep = timeStep,
+#     physicsClientId = physicsClient
+#     )guration '''
 # JointStates = pybullet.calculateInverseKinematics(robotId, 7, [0.1,0.1,0.1])
 
 numDofs = 6
 robotStartPos = [0, 0, 0]
 robotStartOrn = pybullet.getQuaternionFromEuler(np.deg2rad([0, 0, 0]))
 robotId = pybullet.loadURDF(
-    ROBOT_URDF_PATH,
+    fileName=ROBOT_URDF_PATH,
     basePosition=robotStartPos,
     baseOrientation=robotStartOrn,
     useFixedBase=True)
@@ -116,79 +98,96 @@ maxForce = [500]*numDofs
 planeId = pybullet.loadURDF("plane.urdf")
 
 # Load Tray
-tray_position = [0.75, 0, 0]
-tray_orientation = pybullet.getQuaternionFromEuler([0, 0, 0])
-tray_id = pybullet.loadURDF(
-    "tray/traybox.urdf",
-    tray_position,
-    tray_orientation,
-    useFixedBase=True)
+numTrays = 2
+trayPosition = [[0.75, -0.295, 0], [0.75, 0.295, 0.0]]
+trayOrientation = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
 
+trayId = np.zeros(numTrays)
+for trayIdInd in range(numTrays):
+    trayId[trayIdInd] = pybullet.loadURDF(
+        fileName = "tray/traybox.urdf",
+        basePosition = trayPosition[trayIdInd],
+        baseOrientation = pybullet.getQuaternionFromEuler(trayOrientation[trayIdInd]),
+        useFixedBase = True
+        )
 
 ''' Camera Setup '''
 cameraFPS = 12.
-camWidth = 224
+camWidth = 224.
 camHeight = camWidth
 
 viewMatrix = pybullet.computeViewMatrix(
-    cameraEyePosition=[0.75, 0, 0.75],
-    cameraTargetPosition=[0.75, 0, 0],
-    cameraUpVector=[-1, 0, 0])
+    cameraEyePosition = [0.75, 0, 0.75],
+    cameraTargetPosition = [0.75, 0, 0],
+    cameraUpVector = [-1, 0, 0])
 
 projectionMatrix = pybullet.computeProjectionMatrixFOV(
-    fov=45.0,
-    aspect=1.0,
-    nearVal=0.01,
-    farVal=2.0)
+    fov = 45.0,
+    aspect = 1.0,
+    nearVal = 0.01,
+    farVal = 2.0)
 
-# Spawn objects
-numObjects = 15
+maxForce = [1e8]*7
+# pybullet.setJointMotorControlArray(
+#     bodyUniqueId = robotId,
+#     jointIndices = [0, 1, 2, 3, 4, 5, 6],
+#     controlMode = pybullet.POSITION_CONTROL,
+#     targetPositions = np.deg2rad([0.0, 45.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
+#     forces=maxForce)
 
-'''
-objId = spawn_random_objects(
-    numObjects,
-    objSpawnLocation=[1, 1, 1],
-    objPath="./objects/random_urdfs")
-'''
+targetEndEffectorLocation = [0.0, 0.0, 0.8]
 
-
-maxForce = [1e5]*6
+targetThetas = np.deg2rad([-45.0, 45.0, -45.0, 45.0, 45.0, 45.0, 0.0])
 pybullet.setJointMotorControlArray(
+        bodyUniqueId=robotId,
+        jointIndices=range(1,8),
+        controlMode=pybullet.POSITION_CONTROL,
+        targetPositions=targetThetas,
+        forces=maxForce
+        )
+
+pybullet.stepSimulation()
+
+linkState = pybullet.getLinkState(
     bodyUniqueId=robotId,
-    jointIndices=list(range(numDofs)),
-    controlMode=pybullet.POSITION_CONTROL,
-    targetPositions=np.deg2rad([30.0, 45.0, 15.0, 20.0, 10.0, 5.0]),
-    forces=maxForce)
+    linkIndex=7,
+    computeForwardKinematics=True
+    )
+
+# print("\n\nlinkState: {0}\n\n".format(linkState[0]))
+
+# targetEndEffectorLocation = [0.450936795079764, 0.5710833124142867, 0.658157091080004]
 
 
 ''' Run the Simulation '''
 while True:
 
-    width, height, rgbImg, depthImg, segImg = pybullet.getCameraImage(
-        width=camWidth,
-        height=camHeight,
-        viewMatrix=viewMatrix,
-        projectionMatrix=projectionMatrix)
+    string_series = input("\n\nPlease input a target End Effector Location.\n")
+    targetEndEffectorLocation = [float(item) for item in string_series.split()]
 
-    linkWorldPosition = pybullet.getLinkState(
+    targetJointValues = pybullet.calculateInverseKinematics(
+            bodyUniqueId=robotId,
+            endEffectorLinkIndex=5,
+            targetPosition=targetEndEffectorLocation
+        )
+
+    np.set_printoptions(suppress=True)
+    print("targetJointValues: {0}\n".format(np.rad2deg(targetJointValues)))
+
+    pybullet.setJointMotorControlArray(
         bodyUniqueId=robotId,
-        linkIndex=7,
-        computeForwardKinematics=1)
+        jointIndices=range(1,8),
+        controlMode=pybullet.POSITION_CONTROL,
+        targetPositions=targetJointValues[1:8],
+        forces=maxForce
+        )
 
-    targetEndEffectorLocation = linkWorldPosition[0]
-
-    # The Theoretical End Effector Position
-    print("\n\n\n")
-    print(targetEndEffectorLocation)
-    print("\n\n\n")
-
-    thetaInvKin = pybullet.calculateInverseKinematics(
-        bodyUniqueId=robotId,
-        endEffectorLinkIndex=7,
-        targetPosition=targetEndEffectorLocation)
-
-    print(np.rad2deg(thetaInvKin))
-    print("\n\n\n")
+    # Collect the Camera Frame Image
+    # width, height, rgbImg, depthImg, segImg = pybullet.getCameraImage(
+    #     width=camWidth,
+    #     height=camHeight,
+    #     viewMatrix=viewMatrix,
+    #     projectionMatrix=projectionMatrix)
 
     pybullet.stepSimulation()
 

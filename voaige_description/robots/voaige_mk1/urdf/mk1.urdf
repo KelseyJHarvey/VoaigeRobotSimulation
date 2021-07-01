@@ -1,0 +1,748 @@
+<?xml version="1.0" ?>
+
+<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+<!-- File:        mk1.urdf                                                      -->
+<!-- Description: This is the URDF File for the VoAIge Mark 1 Articulated Robot -->
+<!--              Serial Gripper.                                               -->
+<!-- Version:     1.0                                                           -->
+<!-- Author:      Kelsey J. Harvey, kelseyjh@andrew.cmu.edu                     -->
+<!-- Write Date:  June 22, 2021                                                 -->
+<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+
+<!-- MK1 Robot Definition -->
+<robot name = "mk1"
+       version = "1.0">
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- The Portion of the File Details the MK1 Arm Definition Information -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+
+    <!-- MK1 Arm Base Link -->
+    <link name = "base_link">
+        <visual>
+            <origin xyz = "0.000000 0.000000 0.000000" 
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/kinova_gen3/meshes/base_link.STL" />
+            </geometry>
+            <material name = "">
+                <color rgba = "0.752940 0.752940 0.752940 1.000000" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/kinova_gen3/meshes/base_link.STL" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz = "-0.000648 -0.000166 0.084487" 
+                    rpy = " 0.000000  0.000000 0.000000" />
+            <mass value = "1.697" />
+            <inertia ixx = "0.004622" ixy = "9E-06" ixz = "6E-05"
+                     iyy = "0.004495" iyz = "9E-06" izz = "0.002079" />
+        </inertial>
+    </link>
+
+    <!-- MK1 Arm First Actuator -->
+    <joint name = "actuator_1"
+           type = "continuous">
+        <origin xyz = " 0.000000 0.000000 0.156430" 
+                rpy = "-3.141600 0.000000 0.000000" />
+        <parent link = "base_link" />
+        <child link = "shoulder_link" />
+        <axis xyz = "0.000000 0.000000 1.000000" />
+        <limit effort = "39" 
+               velocity = "0.872700" />
+    </joint>
+
+    <!-- MK1 Arm Shoulder Link -->
+    <link name = "shoulder_link">
+        <visual>
+            <origin xyz = "0.000000 0.000000 0.000000" 
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/kinova_gen3/meshes/shoulder_link.STL" />
+            </geometry>
+          <material name = "">
+            <color rgba = "0.752940 0.752940 0.752940 1.000000" />
+          </material>
+        </visual>
+        <collision>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/kinova_gen3/meshes/shoulder_link.STL" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz = "-2.3E-05 -0.010364 -0.07336"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <mass value = "1.377000" />
+            <inertia ixx = "0.004570" ixy = "1E-06"    ixz = "2E-06"
+                     iyy = "0.004831" iyz = "0.000448" izz = "0.001409" />
+        </inertial>
+    </link>
+
+    <!-- MK1 Arm Second Actuator -->
+    <joint name = "actuator_2"
+           type = "revolute">
+        <origin xyz = "0.000000 0.005375 -0.128380" 
+                rpy = "1.570800 0.000000 0.000000" />
+        <parent link = "shoulder_link" />
+        <child link = "bicep_link" />
+        <axis xyz = "0.000000 0.000000 1.000000" />
+        <limit lower = "-2.410000" 
+               upper = "2.410000"
+               effort = "39"
+               velocity = "0.872700" />
+    </joint>
+
+    <!-- MK1 Arm Bicep Link -->
+    <link name = "bicep_link">
+        <visual>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/kinova_gen3/meshes/bicep_link.STL" />
+            </geometry>
+            <material name = "">
+                <color rgba = "0.752940 0.752940 0.752940 1.000000" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/kinova_gen3/meshes/bicep_link.STL" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz = "3.5E-05 -0.208207 -0.01889"
+                    rpy = "0.000000 0.000000 0.000000" />
+                <mass value = "1.262000" />
+                <inertia ixx = "0.046752" ixy = "-9E-06"   ixz = "0.000000"
+                         iyy = "0.000850" iyz = "-9.8E-05" izz = "0.047188" />
+        </inertial>
+    </link>
+
+    <!-- MK1 Arm Third Actuator -->
+    <joint name = "actuator_3" 
+           type = "revolute">
+        <origin xyz = "0.000000 -0.410000 0.000000"
+                rpy = "3.141600  0.000000 0.000000" />
+        <parent link = "bicep_link" />
+        <child link = "forearm_link" />
+        <axis xyz = "0.000000 0.000000 1.000000" />
+        <limit lower = "-2.660000"
+               upper = "2.660000"
+               effort = "39"
+               velocity = "0.872700" />
+    </joint>
+
+    <!-- MK1 Arm Bicep Link -->
+    <link name = "forearm_link">
+        <visual>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/kinova_gen3/meshes/forearm_link.STL" />
+            </geometry>
+            <material name = "">
+                <color rgba = "0.752940 0.752940 0.752940 1.000000" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/kinova_gen3/meshes/forearm_link.STL" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz = "1.8E-05 0.076168 -0.01397"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <mass value = "0.93" />
+            <inertia ixx = "0.008292" ixy = "-1E-06" ixz = "0.000000"
+                     iyy = "0.000628" iyz = "0.000432" izz = "0.008464" />
+        </inertial>
+    </link>
+
+    <!-- MK1 Arm Fourth Actuator -->
+    <joint name = "actuator_4"
+           type = "continuous">
+        <origin xyz = "0.000000 0.208430 -0.006375"
+                rpy = "1.570800 0.000000  0.000000" />
+        <parent link = "forearm_link" />
+        <child link = "sphericalwrist1_link" />
+        <axis xyz = "0.000000 0.000000 1.000000" />
+        <limit effort = "9"
+               velocity = "0.872700" />
+    </joint>
+
+    <!-- MK1 Arm First Spherical Wrist Link -->
+    <link name = "sphericalwrist1_link">
+        <visual>
+          <origin xyz = "0.000000 0.000000 0.000000"
+                  rpy = "0.000000 0.000000 0.000000" />
+          <geometry>
+            <mesh filename = "package://voaige_description/arms/kinova_gen3/meshes/spherical_wrist_1_link.STL" />
+          </geometry>
+          <material name = "">
+            <color rgba = "0.752940 0.752940 0.752940 1.000000" />
+          </material>
+        </visual>
+        <collision>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/kinova_gen3/meshes/spherical_wrist_1_link.STL" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz = "-1E-06 0.008486 -0.062937"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <mass value = "0.6781" />
+            <inertia ixx = "0.001645" ixy = " 0.000000" ixz = "0.000000"
+                     iyy = "0.001666" iyz = "-0.000234" izz = "0.000389" />
+        </inertial>
+    </link>
+
+    <!-- MK1 Arm Fifth Actuator -->
+    <joint name = "actuator_5"
+           type = "revolute">
+        <origin xyz = " 0.000000 -0.00017505 -0.105930"
+                rpy = "-1.570800  0.00000000  0.000000" />
+        <parent link = "sphericalwrist1_link" />
+        <child link = "sphericalwrist2_link" />
+        <axis xyz = "0.000000 0.000000 1.000000" />
+        <limit lower = "-2.230000"
+               upper = "2.230000"
+               effort = "9"
+               velocity = "0.872700" />
+    </joint>
+
+    <!-- MK1 Arm Second Spherical Wrist Link -->
+    <link name = "sphericalwrist2_link">
+        <visual>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/kinova_gen3/meshes/spherical_wrist_2_link.STL" />
+            </geometry>
+            <material name = "">
+                <color rgba = "0.752940 0.752940 0.752940 1.000000" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/kinova_gen3/meshes/spherical_wrist_2_link.STL" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz = "-1E-06 0.046429 -0.008704"
+                    rpy = " 0.000 0.000000  0.000000" />
+            <mass value = "0.678" />
+            <inertia ixx = "0.001685" ixy = "0.000000" ixz = "0.000000"
+                     iyy = "0.000400" iyz = "0.000255" izz = "0.001696" />
+        </inertial>
+    </link>
+
+    <!-- MK1 Arm Sixth Actuator -->
+    <joint name = "actuator_6"
+           type = "continuous">
+        <origin xyz = "0.000000 0.105930 -0.00017505"
+                rpy = "1.570800 0.000000  0.00000000" />
+        <parent link = "sphericalwrist2_link" />
+        <child link = "kinova_gen3_bracelet_link" />
+        <axis xyz = "0.000000 0.000000 1.000000" />
+        <limit effort = "9"
+               velocity = "0.872700" />
+    </joint>
+
+    <!-- MK1 Arm Bracelet Link -->
+    <link name = "kinova_gen3_bracelet_link">
+        <visual>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/kinova_gen3/meshes/bracelet_with_vision_link.STL" />
+            </geometry>
+            <material name = "">
+                <color rgba = "0.752940 0.752940 0.752940 1.000000" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/arms/kinova_gen3/meshes/bracelet_with_vision_link.STL" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz = "0.000281 0.011402 -0.029798"
+                    rpy = "0.000000 0.000000  0.000000" />
+            <mass value = "0.5" />
+            <inertia ixx = "0.000587" ixy = "3E-06" ixz = "3E-06"
+                     iyy = "0.000369" iyz = "-0.000118" izz = "0.000609" />
+        </inertial>
+    </link>
+    
+    
+    
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- The Portion of the File Details the MK1 Gripper Definition Information -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    
+    
+    
+    <!-- MK1 Arm Bracelet to Gripper Base Joint -->
+    <joint name = "mk1_arm_to_gripper"
+           type = "fixed">
+        <origin xyz = "0.000000 0.000000 -0.061500"
+                rpy = "3.141592 0.000000  0.000000" />
+        <parent link = "kinova_gen3_bracelet_link" />
+        <child link = "robotiq_2f_140_base_link" />
+        <axis xyz = "0.000000 0.000000 1.000000" />
+    </joint>
+
+    <!-- MK1 Gripper Base Link -->
+    <link name = "robotiq_2f_140_base_link">
+        <visual>
+            <origin xyz = "0.000000 0.000000 0.000000"rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/grippers/robotiq_2f_140/meshes/robotiq_2f_140_base.dae"
+                      scale = "0.001 0.001 0.001" />
+            </geometry>
+            <material name = "Gazebo/Black">
+                <color rgba = "0.100000 0.100000 0.100000 1.000000" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz = "0.000000 0.000000 0.000000" 
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/grippers/robotiq_2f_140/meshes/robotiq_2f_140_base.dae"
+                      scale = "0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz = "0.000000 0.00000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <mass value = "0.52954" />
+            <inertia ixx = "573495E-9" ixy = "-554E-9" ixz = "2628E-9"
+                     iyy = "681780E-9" iyz = " 607E-9" izz = "483281E-9" />
+        </inertial>
+    </link>
+    <gazebo reference = "robotiq_2f_140_base_link">
+        <material>Gazebo/Black</material>
+        <selfCollide>True</selfCollide>
+    </gazebo>
+    
+    <!-- MK1 Gripper Base to Left Outer Knuckle Joint -->
+    <joint name = "robotiq_2f_base_to_robotiq_140_left_outer_knuckle"
+           type = "revolute">
+        <origin xyz = "0.0306 0.000000 0.05466"
+                rpy = "0.000000 0.000000 0.000000" />
+        <parent link = "robotiq_2f_140_base_link" />
+        <child link = "robotiq_140_left_outer_knuckle" />
+        <axis xyz = "0.000000 -1.000000 0.000000" />
+        <limit effort = "18.650000"
+               lower = "0.000000"
+               upper = "0.78574722925"
+               velocity = "2.000000" />
+        <mimic joint = "robotiq_140_joint_finger"
+               multiplier = "1.000000"
+               offset = "0.000000" />
+    </joint>
+      
+    <!-- MK1 Gripper Left Outer Knuckle Link -->
+    <link name = "robotiq_140_left_outer_knuckle">
+        <visual>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/grippers/robotiq_2f_140/meshes/robotiq_2f_140_left_outer_knuckle.dae" scale = "0.001 0.001 0.001" />
+            </geometry>
+            <material name = "">
+                <color rgba = "0.792156862745098 0.819607843137255 0.933333333333333 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/grippers/robotiq_2f_140/meshes/robotiq_2f_140_left_outer_knuckle.dae" scale = "0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz = "0.016160 0.000000 -0.001330"
+                    rpy = "0.000000 0.000000  0.000000" />
+            <mass value = "0.0131" />
+            <inertia ixx = "325.5E-9" ixy = "0.000000" ixz = "197.94E-9"
+                     iyy = "2306.36E-9" iyz = "0.000000" izz = "2176E-9" />
+        </inertial>
+    </link>
+    <gazebo reference = "robotiq_140_left_outer_knuckle">
+        <material> Gazebo/Grey </material>
+        <selfCollide> True </selfCollide>
+    </gazebo>
+    
+    <!-- MK1 Gripper Left Outer Knuckle to Left Outer Finger Joint -->
+    <joint name = "robotiq_140_left_outer_knuckle_to_finger"
+           type = "fixed">
+        <origin xyz = "0.031420 0.000000 -0.004530"
+                rpy = "0.000000 0.000000  0.000000" />
+        <parent link = "robotiq_140_left_outer_knuckle" />
+        <child link = "robotiq_140_left_outer_finger" />
+    </joint>
+    
+    <!-- MK1 Gripper Left Outer Finger Link -->
+    <link name = "robotiq_140_left_outer_finger">
+        <visual>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/grippers/robotiq_2f_140/meshes/robotiq_2f_140_left_outer_finger.dae"
+                      scale = "0.001 0.001 0.001" />
+            </geometry>
+            <material name = "Gazebo/Black">
+                <color rgba = "0.100000 0.100000 0.100000 1.000000" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/grippers/robotiq_2f_140/meshes/robotiq_2f_140_left_outer_finger.dae"
+                      scale = "0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz = "0.014820 0.000000 0.034510"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <mass value = "0.076370" />
+            <inertia ixx = "45513E-9" ixy = "0.000000" ixz = "-20691E-9"
+                     iyy = "52570E-9" iyz = "0.000000" izz = " 17804E-9" />
+        </inertial>
+    </link>
+    <gazebo reference = "robotiq_140_left_outer_finger">
+        <material> Gazebo/Black </material>
+        <selfCollide> True </selfCollide>
+    </gazebo>
+    
+    <!-- MK1 Gripper Left Outer Knuckle to Left Outer Finger Joint -->
+    <joint name = "robotiq_140_left_outer_finger_to_inner"
+           type = "revolute">
+        <origin xyz = "0.035430 0.000000 0.078900"
+                rpy = "0.000000 0.000000 0.000000" />
+        <parent link = "robotiq_140_left_outer_finger" />
+        <child link = "robotiq_140_left_inner_finger" />
+        <axis xyz = "0.000000 1.000000 0.000000" />
+        <limit effort = "18.650000"
+               lower = "0.000000"
+               upper = "0.78574722925"
+               velocity = "3.540000" />
+        <mimic joint = "robotiq_140_joint_finger"
+               multiplier = "1.000000"
+               offset = "0.000000" />
+    </joint>
+    
+    <!-- MK1 Gripper Left Inner Finger Link -->
+    <link name = "robotiq_140_left_inner_finger">
+        <visual>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+            <mesh filename = "package://voaige_description/grippers/robotiq_2f_140/meshes/robotiq_2f_140_left_inner_finger.dae"
+                  scale = "0.001000 0.001000 0.001000" />
+            </geometry>
+            <material name = "Gazebo/Black">
+                <color rgba = "0.100000 0.100000 0.10000 1.000000" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+            <mesh filename = "package://voaige_description/grippers/robotiq_2f_140/meshes/robotiq_2f_140_left_inner_finger.dae"
+                  scale = "0.001000 0.001000 0.001000" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz = "-0.015630 0.000000 0.025220"
+                    rpy = " 0.000000 0.000000 0.000000" />
+            <mass value = "0.045" />
+            <inertia ixx = "26663E-9" ixy = "0.000000" ixz = "5579E-9"
+                     iyy = "28009E-9" iyz = "0.000000" izz = "4368E-9" />
+        </inertial>
+    </link>
+    <gazebo reference = "robotiq_140_left_inner_finger">
+        <material> Gazebo/Black </material>
+        <selfCollide> False </selfCollide>
+    </gazebo>
+
+    <!-- MK1 Gripper Base to Left Inner Knuckle Joint -->
+    <joint name = "robotiq_2f_base_to_robotiq_2f_140_left_inner_knuckle"
+           type = "revolute">
+        <origin xyz = "0.012700 0.000000 0.061180"
+                rpy = "0.000000 0.000000 0.000000" />
+        <parent link = "robotiq_2f_140_base_link" />
+        <child link = "robotiq_2f_140_left_inner_knuckle" />
+        <axis xyz = "0.000000 -1.000000 0.000000" />
+        <limit effort = "18.650000"
+               lower = "0.000000"
+               upper = "0.78574722925"
+               velocity = "3.540000" />
+        <mimic joint = "robotiq_140_joint_finger"
+               multiplier = "1.000000"
+               offset = "0.000000" />
+    </joint>
+
+    <!-- MK1 Gripper Left Inner Knuckle Link -->
+    <link name = "robotiq_2f_140_left_inner_knuckle">
+        <visual>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/grippers/robotiq_2f_140/meshes/robotiq_2f_140_left_inner_knuckle.dae" scale = "0.001 0.001 0.001" />
+            </geometry>
+            <material name = "Gazebo/Black">
+                <color rgba = "0.100000 0.100000 0.100000 1.000000" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/grippers/robotiq_2f_140/meshes/robotiq_2f_140_left_inner_knuckle.dae" scale = "0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz = "0.03332 0.000000 0.0379"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <mass value = "0.04476" />
+            <inertia ixx = "28054E-9" ixy = "0.000000" ixz = "-19174E-9"
+                     iyy = "39758E-9" iyz = "0.000000" izz = " 23453E-9" />
+        </inertial>
+    </link>
+    <gazebo reference = "robotiq_2f_140_left_inner_knuckle">
+        <material>Gazebo/Black</material>
+        <selfCollide>False</selfCollide>
+    </gazebo>
+  
+    <!-- robot -->
+    <joint name = "robotiq_2f_base_to_robotiq_140_right_inner_knuckle"
+           type = "revolute">
+        <origin xyz = "-0.012700 0.000000 0.061180"
+                rpy = " 0.000000 0.000000 0.000000" />
+        <parent link = "robotiq_2f_140_base_link" />
+        <child link = "robotiq_140_right_inner_knuckle" />
+        <axis xyz = "0.000000 1.000000 0.000000" />
+        <limit effort = "18.650000"
+               lower = "0.000000"
+               upper = "0.78574722925"
+               velocity = "3.540000" />
+        <mimic joint = "robotiq_140_joint_finger"
+               multiplier = "1.000000"
+               offset = "0.000000" />
+    </joint>
+    
+    <!-- robotiq_85_right_inner_knuckle_link -->
+    <link name = "robotiq_140_right_inner_knuckle">
+        <visual>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/grippers/robotiq_2f_140/meshes/robotiq_2f_140_right_inner_knuckle.dae"
+                      scale = "0.001 0.001 0.001" />
+            </geometry>
+            <material name = "Gazebo/Black">
+                <color rgba = "0.100000 0.100000 0.100000 1.000000" />
+            </material>
+        </visual>
+        <collision>
+          <origin xyz = "0.000000 0.000000 0.000000"
+                  rpy = "0.000000 0.000000 0.000000" />
+          <geometry>
+            <mesh filename = "package://voaige_description/grippers/robotiq_2f_140/meshes/robotiq_2f_140_right_inner_knuckle.dae" scale = "0.001 0.001 0.001" />
+          </geometry>
+        </collision>
+        <inertial>
+            <origin xyz = "-0.033320 0.000000 0.037900"
+                    rpy = " 0.000000 0.000000 0.000000" />
+            <mass value = "0.044760" />
+            <inertia ixx = "28054E-9" ixy = "0.000000" ixz = "19174E-9"
+                     iyy = "39758E-9" iyz = "0.000000" izz = "23453E-9" />
+        </inertial>
+    </link>
+    <gazebo reference = "robotiq_140_right_inner_knuckle">
+        <material> Gazebo/Black </material>
+        <selfCollide> False </selfCollide>
+    </gazebo>
+  
+    <!-- robot -->
+    <joint name = "robotiq_140_joint_finger"
+           type = "revolute">
+        <origin xyz = "-0.0306 0.000000 0.05466"
+                rpy = "0.000000 0.000000 0.000000" />
+        <parent link = "robotiq_2f_140_base_link" />
+        <child link = "robotiq_140_right_outer_knuckle" />
+        <axis xyz = "0.000000 1.000000 0.000000" />
+        <limit effort = "18.650000"
+               lower = "0.000000"
+               upper = "0.78574722925"
+               velocity = "3.540000" />
+    </joint>
+    
+    <!-- robotiq_85_right_knuckle_link -->
+    <link name = "robotiq_140_right_outer_knuckle">
+        <visual>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/grippers/robotiq_2f_140/meshes/robotiq_2f_140_right_outer_knuckle.dae"
+                      scale = "0.001 0.001 0.001" />
+            </geometry>
+            <material name = "">
+                <color rgba = "0.792156862745098 0.819607843137255 0.933333333333333 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/grippers/robotiq_2f_140/meshes/robotiq_2f_140_right_outer_knuckle.dae"
+                      scale = "0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz = "-0.016160 0.000000 -0.001330"
+                    rpy = " 0.000000 0.000000  0.000000" />
+            <mass value = "0.013100" />
+            <inertia ixx = "325.5E-9" ixy = "0.000000" ixz = "-197.94E-9"
+                     iyy = "2306.36E-9" iyz = "0.000000" izz = "2176E-9" />
+        </inertial>
+    </link>
+    <gazebo reference = "robotiq_140_right_outer_knuckle">
+        <material> Gazebo/Grey </material>
+        <selfCollide> True </selfCollide>
+    </gazebo>
+    
+    <!-- MK1 Gripper Right Outer Knuckle to Right Outer Finger Joint -->
+    <joint name = "robotiq_140_right_outer_knuckle_to_finger"
+           type = "fixed">
+        <origin xyz = "-0.03142 0.000000 -0.004530"
+                rpy = " 0.00000 0.000000  0.000000" />
+        <parent link = "robotiq_140_right_outer_knuckle" />
+        <child link = "robotiq_140_right_outer_finger" />
+    </joint>
+  
+    <!-- robot -->
+    <link name = "robotiq_140_right_outer_finger">
+        <visual>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/grippers/robotiq_2f_140/meshes/robotiq_2f_140_right_outer_finger.dae"
+                      scale = "0.001 0.001 0.001" />
+            </geometry>
+            <material name = "Gazebo/Black">
+                <color rgba = "0.100000 0.100000 0.100000 1.000000" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/grippers/robotiq_2f_140/meshes/robotiq_2f_140_right_outer_finger.dae" scale = "0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz = "-0.014820 0.000000 0.034510"
+                    rpy = " 0.000000 0.000000 0.000000" />
+            <mass value = "0.076370" />
+            <inertia ixx = "45513E-9" ixy = "0.000000" ixz = "20691E-9"
+                     iyy = "52570E-9" iyz = "0.000000" izz = "17804E-9" />
+        </inertial>
+    </link>
+    <gazebo reference = "robotiq_140_right_outer_finger">
+        <material> Gazebo/Black </material>
+        <selfCollide> True </selfCollide>
+    </gazebo>
+
+    <!-- robot -->
+    <joint name = "robotiq_140_right_outer_finger_to_inner"
+           type = "revolute">
+        <origin xyz = "-0.035430 0.000000 0.078900"
+                rpy = " 0.000000 0.000000 0.000000" />
+        <parent link = "robotiq_140_right_outer_finger" />
+        <child link = "robotiq_140_right_inner_finger" />
+        <axis xyz = "0.000000 -1.000000 0.000000" />
+        <limit effort = "18.650000"
+               lower = "0.000000"
+               upper = "0.78574722925"
+               velocity = "3.540000" />
+        <mimic joint = "robotiq_140_joint_finger"
+               multiplier = "1.000000"
+               offset = "0.000000" />
+    </joint>
+
+    <!-- robotiq_85_right_finger_link -->
+    <link name = "robotiq_140_right_inner_finger">
+        <visual>
+            <origin xyz = "0.000000 0.000000 0.000000" 
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/grippers/robotiq_2f_140/meshes/robotiq_2f_140_right_inner_finger.dae"
+                      scale = "0.001000 0.001000 0.001000" />
+            </geometry>
+            <material name = "Gazebo/Black">
+                <color rgba = "0.100000 0.100000 0.100000 1.000000" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz = "0.000000 0.000000 0.000000"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <geometry>
+                <mesh filename = "package://voaige_description/grippers/robotiq_2f_140/meshes/robotiq_2f_140_right_inner_finger.dae" scale = "0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz = "0.015630 0.000000 0.025220"
+                    rpy = "0.000000 0.000000 0.000000" />
+            <mass value = "0.045000" />
+            <inertia ixx = "26663E-9" ixy = "0.000000" ixz = "-5579E-9"
+                     iyy = "28009E-9" iyz = "0.000000" izz = " 4368E-9" />
+        </inertial>
+    </link>
+    <gazebo reference = "robotiq_140_right_inner_finger">
+        <material> Gazebo/Black </material>
+        <selfCollide> False </selfCollide>
+    </gazebo>
+    
+    
+    <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- The Portion of the File Details the MK1 Preliminary Setup Information -->
+    <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+
+    <!-- The World Link (Link 0) -->
+    <link name = "world" />
+  
+    <!-- Connect the MK1 to the World -->
+    <joint name = "world_arm_joint"
+           type = "fixed">
+        <parent link = "world" />
+        <child link = "base_link" />
+        <origin xyz = "0.000000 0.000000 0.000000"
+                rpy = "0.000000 0.000000 0.000000" />
+    </joint>
+        
+</robot>
+
