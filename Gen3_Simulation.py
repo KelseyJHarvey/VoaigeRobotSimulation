@@ -1,193 +1,175 @@
 #!/usr/bin/env/python3
 
-import math
+'''!
+@file Gen3_Simulation.py
+'''
+
+# import math
 import numpy as np
-import time
+from operator import add
+
+# import time
 
 ''' PyBullet Libraries'''
 import pybullet
 import pybullet_data
 
-'''!
-@file Gen3_Simulation.py
-'''
+''' Import VoAIge Proprietary Libraries '''
+
+import voaige_mk1_sim
 
 
-def spawn_random_objects(numObjects, objSpawnLocation, objPath, objScale=0.1):
-    '''!
-    Spawns a random object from a .URDF file.
-    @name spawn_random_objects()
 
-    @brief Spawns a specified dnumber of random objects at a specified
-           location with added Gaussian Noise to prevent object spawn
-           collisions.
-
-    @param numObjects The number of objects to be spawned.
-    @param objSpawnLocation A 3-Vector (list type) specifying the spawn
-           location.
-    @param objPath The path string to the object files.
-    @param objScale The value by which to scale the objects volumetrically.
-
-    @return objIds Integer IDs of Spawned Objects.
-    '''
-
-    # Add Gaussian Noise to Spawn Location to Avoid Object Collisions
-    objStartPos = npybullet.random.normal(
-        loc=objSpawnLocation,
-        scale=[objScale]*2 + [0.0],
-        size=(numObjects, 3)
-    )
-
-    objIds = []
-    for objIndex in range(numObjects):
-
-        # Fetch an Object from the Repository at Random
-        objFileNumStr = str("%03d" % npybullet.random.randint(0, 1000))
-
-        # Load the Corresponding URDF File of the Retreived Object
-        objIds.append(pybullet.loadURDF(
-            fileName=objPath+"/"+objFileNumStr+"/"+objFileNumStr+".urdf",
-            basePosition=objStartPos[objIndex]
-        ))
-
-        print("Spawned object: " + objFileNumStr)
-
-    return objIds
-
-ROBOT_URDF_PATH = "./voaige_description/robots/voaige_mk1/urdf/mk1.urdf"
-
+'''++++++++++++++++++++++++++'''
 ''' Simulation Configuration '''
+'''++++++++++++++++++++++++++'''
 
-fps = 240.0
-timeStep = 1.0/fps
+# Configure the Physics Engine (TODO: Allow to Pass Arguments.)
+voaige_mk1_sim.physics_config()
 
-physicsClient = pybullet.connect(pybullet.GUI)
-pybullet.setAdditionalSearchPath(pybullet_data.getDataPath())
-pybullet.setRealTimeSimulation(
-    enableRealTimeSimulation = 1,
-    physicsClientId = physicsClient
-    )
-pybullet.setGravity(0, 0, -9.81)
+# Configure the Robot's Working Environment
+voaige_mk1_sim.environment_config()
 
-# pybullet.setTimeStep(
-#     timeStep = timeStep,
-#     physicsClientId = physicsClient
-#     )
+# Configure the Overhead Camera
+overHeadCamWidth = 224
+overHeadCamHeight = overHeadCamWidth
+# viewMatrix, projectionMatrix = voaige_mk1_sim.camera_setup(camWidth, camHeight)
 
-''' Robot Arm Confi# pybullet.setTimeStep(
-#     timeStep = timeStep,
-#     physicsClientId = physicsClient
-#     )guration '''
-# JointStates = pybullet.calculateInverseKinematics(robotId, 7, [0.1,0.1,0.1])
+overHeadViewMatrix = pybullet.computeViewMatrix(
+    cameraEyePosition=[0.75, 0, 0.75],
+    cameraTargetPosition=[0.75, 0, 0],
+    cameraUpVector=[-1, 0, 0]
+)
 
-numDofs = 6
-robotStartPos = [0, 0, 0]
-robotStartOrn = pybullet.getQuaternionFromEuler(np.deg2rad([0, 0, 0]))
+overHeadProjectionMatrix = pybullet.computeProjectionMatrixFOV(
+    fov=45.0, # Degrees
+    aspect=1.0,
+    nearVal=0.01,
+    farVal=2.0
+)
+
+# Configure the Bracelet Camera
+braceletCamWidth = 224
+braceletCamHeight = braceletCamWidth
+
+braceletViewMatrix = pybullet.computeViewMatrix(
+    cameraEyePosition=[0.0, 0.0, 1.2],
+    cameraTargetPosition=[1, 0, 0.5],
+    cameraUpVector=[0, 0, 1]
+)
+
+braceletProjectionMatrix = pybullet.computeProjectionMatrixFOV(
+    fov=45.0, # Degrees
+    aspect=1.0,
+    nearVal=0.01,
+    farVal=2.0
+)
+
+# Spawn Objects Into Robot's Right Tray
+# TODO: Implement This With Tom's New Object URDFs.
+
+''' MK1 Robot Configuration '''
+# TODO: Consolidate Into Module File.
+# Configure the Robot Itself
+MK1_URDF_PATH = "./voaige_description/arms/kinova_gen3/urdf/GEN3-6DOF_VISION_URDF_ARM_V01.urdf"
+MK1_DEFAULT_START_POS = [0.0, 0.0, 0.0]
+MK1_DEFAULT_START_ORIENTATION = pybullet.getQuaternionFromEuler(np.deg2rad([0.0, 0.0, 0.0]))
+MK1_BRACELET_LINK_INDEX = 5
+MK1_GRIPPER_BASE_LINK_INDEX = 6
+MK1_NUM_DOFS = 6
+MK1_MAX_JOINT_FORCE = 5E2
+# TODO: Implement PyBullet Functionality to Compute This Dynamically.
+MK1_END_EFFECTOR_ORIENTATION_OFFSET = [90.0, 0.0, -90.0]
+
+''' Robot Arm Configuration '''
+
+# Obtain the MK1 Robot ID
 robotId = pybullet.loadURDF(
-    fileName=ROBOT_URDF_PATH,
-    basePosition=robotStartPos,
-    baseOrientation=robotStartOrn,
-    useFixedBase=True)
+    fileName=MK1_URDF_PATH,
+    basePosition=MK1_DEFAULT_START_POS,
+    baseOrientation=MK1_DEFAULT_START_ORIENTATION,
+    useFixedBase=True
+)
 
-numJoints = pybullet.getNumJoints(robotId)
-maxForce = [500]*numDofs
-
-
-''' Environment Configuration '''
-# Load Solid Floor
-planeId = pybullet.loadURDF("plane.urdf")
-
-# Load Tray
-numTrays = 2
-trayPosition = [[0.75, -0.295, 0], [0.75, 0.295, 0.0]]
-trayOrientation = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-
-trayId = np.zeros(numTrays)
-for trayIdInd in range(numTrays):
-    trayId[trayIdInd] = pybullet.loadURDF(
-        fileName = "tray/traybox.urdf",
-        basePosition = trayPosition[trayIdInd],
-        baseOrientation = pybullet.getQuaternionFromEuler(trayOrientation[trayIdInd]),
-        useFixedBase = True
-        )
-
-''' Camera Setup '''
-cameraFPS = 12.
-camWidth = 224.
-camHeight = camWidth
-
-viewMatrix = pybullet.computeViewMatrix(
-    cameraEyePosition = [0.75, 0, 0.75],
-    cameraTargetPosition = [0.75, 0, 0],
-    cameraUpVector = [-1, 0, 0])
-
-projectionMatrix = pybullet.computeProjectionMatrixFOV(
-    fov = 45.0,
-    aspect = 1.0,
-    nearVal = 0.01,
-    farVal = 2.0)
-
-maxForce = [1e8]*7
-# pybullet.setJointMotorControlArray(
-#     bodyUniqueId = robotId,
-#     jointIndices = [0, 1, 2, 3, 4, 5, 6],
-#     controlMode = pybullet.POSITION_CONTROL,
-#     targetPositions = np.deg2rad([0.0, 45.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
-#     forces=maxForce)
-
-targetEndEffectorLocation = [0.0, 0.0, 0.8]
-
-targetThetas = np.deg2rad([-45.0, 45.0, -45.0, 45.0, 45.0, 45.0, 0.0])
-pybullet.setJointMotorControlArray(
-        bodyUniqueId=robotId,
-        jointIndices=range(1,8),
-        controlMode=pybullet.POSITION_CONTROL,
-        targetPositions=targetThetas,
-        forces=maxForce
-        )
-
-pybullet.stepSimulation()
-
-linkState = pybullet.getLinkState(
-    bodyUniqueId=robotId,
-    linkIndex=7,
-    computeForwardKinematics=True
-    )
-
-# print("\n\nlinkState: {0}\n\n".format(linkState[0]))
-
-# targetEndEffectorLocation = [0.450936795079764, 0.5710833124142867, 0.658157091080004]
 
 
 ''' Run the Simulation '''
 while True:
 
-    string_series = input("\n\nPlease input a target End Effector Location.\n")
-    targetEndEffectorLocation = [float(item) for item in string_series.split()]
+    # Collect the Over-Head Camera Frame Image
+    # overheadWidth, overheadHeight, ovrhdRGBImg, ovrhdDepthImg, ovrhdSegImg = \
+    # pybullet.getCameraImage(
+    #     width=overHeadCamWidth,
+    #     height=overHeadCamHeight,
+    #     viewMatrix=overHeadViewMatrix,
+    #     projectionMatrix=overHeadProjectionMatrix
+    # )
 
+    # Collect the Robot Bracelet Camera Frame Image
+
+    # Get the End-Effector Link State
+    endEffectorLinkState = pybullet.getLinkState(
+        bodyUniqueId=robotId,
+        linkIndex=MK1_BRACELET_LINK_INDEX, # Check This Number
+        computeForwardKinematics=True
+    )
+
+    print("\n\nendEffectorLinkState: {0}\n\n".format(endEffectorLinkState[0]))
+
+    # braceletViewMatrix = pybullet.computeViewMatrixFromYawPitchRoll(
+    #     cameraTargetPosition=endEffectorLinkState[0],
+    #     distance=0.2,
+    #     yaw=np.deg2rad(0.0), # Radians
+    #     pitch=np.deg2rad(0.0), # Radians
+    #     roll=np.deg2rad(0.0), # Radians
+    #     upAxisIndex=2, # Z Up Axis
+    # )
+
+    braceletViewMatrix = pybullet.computeViewMatrix(
+        cameraEyePosition=np.add(endEffectorLinkState[0], [0.0, 0.0, 0.2]),
+        cameraTargetPosition=[0.75, 0.0, 0.0],
+        cameraUpVector=[0.0, 0.0, 1.0]
+    )
+
+    # braceletProjectionMatrix = pybullet.computeProjectionMatrixFOV(
+    #     fov=45.0,  # Degrees
+    #     aspect=1.0,
+    #     nearVal=0.01,
+    #     farVal=2.0
+    # )
+
+    # brcltWidth, brcltHeight, brcltRGBImg, brcltDepthImg, brcltSegImg = \
+    pybullet.getCameraImage(
+         width=braceletCamWidth,
+         height=braceletCamHeight,
+         viewMatrix=braceletViewMatrix,
+         projectionMatrix=braceletProjectionMatrix
+    )
+
+    # TODO: Dipan, Please Merge End-Effector Code Here.
+    # string_series = input("\n\nPlease input a target End Effector Location.\n")
+    # targetEndEffectorLocation = [float(item) for item in string_series.split()]
+    targetEndEffectorPosition = [0.7, 0.0, 0.4]
+    targetEndEffectorOrientation = pybullet.getQuaternionFromEuler(
+        np.deg2rad(list(map(add, MK1_END_EFFECTOR_ORIENTATION_OFFSET, [0.0, 0.0, 0.0])))
+    )
+
+    # Obtain Necessary Joint Values for Target End-Effector Position
     targetJointValues = pybullet.calculateInverseKinematics(
-            bodyUniqueId=robotId,
-            endEffectorLinkIndex=5,
-            targetPosition=targetEndEffectorLocation
-        )
+        bodyUniqueId=robotId,
+        endEffectorLinkIndex=MK1_BRACELET_LINK_INDEX,
+        targetPosition=targetEndEffectorPosition,
+        targetOrientation=targetEndEffectorOrientation
+    )
 
-    np.set_printoptions(suppress=True)
-    print("targetJointValues: {0}\n".format(np.rad2deg(targetJointValues)))
-
+    # Set the Joint Motor Positions for Desired End-Effector Position
     pybullet.setJointMotorControlArray(
         bodyUniqueId=robotId,
-        jointIndices=range(1,8),
+        jointIndices=range(MK1_BRACELET_LINK_INDEX + 1),
         controlMode=pybullet.POSITION_CONTROL,
-        targetPositions=targetJointValues[1:8],
-        forces=maxForce
-        )
-
-    # Collect the Camera Frame Image
-    # width, height, rgbImg, depthImg, segImg = pybullet.getCameraImage(
-    #     width=camWidth,
-    #     height=camHeight,
-    #     viewMatrix=viewMatrix,
-    #     projectionMatrix=projectionMatrix)
+        targetPositions=targetJointValues[:MK1_BRACELET_LINK_INDEX + 1],
+        forces=[MK1_MAX_JOINT_FORCE] * MK1_NUM_DOFS  # Newtons
+    )
 
     pybullet.stepSimulation()
 
